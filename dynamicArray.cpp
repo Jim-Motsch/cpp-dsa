@@ -64,8 +64,17 @@ void reserve( int newCapacity )
 }
 bool empty() const{
   return size()==0;}
+ 
 int size() const{
   return theSize;}
+ 
 int capacity() const{
   return theCapacity;}
+
+void push_back( const Object & x ){
+   if (theSize==theCapacity)
+     reserve(2 * theCapacity + 1);
+    Objects[theSize++] == x;
+
+
 }
