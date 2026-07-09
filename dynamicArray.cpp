@@ -1,11 +1,13 @@
-#infdef
+#ifndef DYNAMICARRAY_H
+#define DYNAMICARRAY_H
+#include <utility>
 template <typename Object>
 class dynamicArray{
-
+public:
 explicit dynamicArray(int initSize = 0) : 
   theSize{initSize}, 
-  theCapacity{initSize + SPARE_CAPACITY},
-  {object = newObject[theCapacity];}
+  theCapacity{initSize + SPARE_CAPACITY}
+  {objects = new Object[theCapacity];}
 
 dynamicArray(const dynamicArray & rhs):
   theSize{rhs.theSize},
@@ -16,7 +18,7 @@ dynamicArray(const dynamicArray & rhs):
    objects[k]=rhs.objects[k];
 }
 
-dynamicArray &operator= (const Vector & rhs)
+dynamicArray &operator= (const dynamicArray & rhs)
 {
   dynamicArray copy = rhs;
   std::swap(*this, copy);
@@ -24,7 +26,7 @@ dynamicArray &operator= (const Vector & rhs)
 }
 
 ~dynamicArray()
-{delete [] Objects;)
+{delete [] objects;}
 
 dynamicArray(dynamicArray && rhs):
   theSize{rhs.theSize},
@@ -36,18 +38,18 @@ dynamicArray(dynamicArray && rhs):
   rhs.theCapacity=0;
 }
 
-dynamicArray & operator= (dynamicArray && rhs):
+dynamicArray & operator= (dynamicArray && rhs)
 {
   std::swap( theSize,rhs.theSize );
   std::swap( theCapacity, rhs.theCapacity );
   std::swap( objects, rhs.objects);
-return *this
+  return *this;
 }
 
 void resize(int newSize){
   if(newSize > theCapacity)
     reserve(newSize*2);
-  theSize=newSize
+  theSize=newSize;
 }
 
 void reserve( int newCapacity )
@@ -74,7 +76,24 @@ int capacity() const{
 void push_back( const Object & x ){
    if (theSize==theCapacity)
      reserve(2 * theCapacity + 1);
-    Objects[theSize++] == x;
-
-
+    objects[theSize++] = x;
 }
+
+void push_back( Object && x )   
+                                      
+    {
+        if( theSize == theCapacity )
+            reserve( 2 * theCapacity + 1 );
+        objects[ theSize++ ] = std::move( x );
+    }
+
+
+private:
+  int theSize;
+  int theCapacity;
+  Object *objects;
+
+  static const int SPARE_CAPACITY = 16;
+};
+
+#endif
